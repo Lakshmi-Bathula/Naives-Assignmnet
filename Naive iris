@@ -1,0 +1,48 @@
+# Import necessary libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load the dataset from the CSV file
+iris_dataset = pd.read_csv('/content/iris.csv (1).crdownload')
+
+print(iris_dataset.columns)
+
+# Define features and target variable
+feature_data = iris_dataset.drop('Species', axis=1)
+target_data = iris_dataset['Species']
+
+# Split the data into training and testing sets
+feature_train, feature_test, target_train, target_test = train_test_split(feature_data, target_data, test_size=0.2, random_state=42)
+
+# Initialize the Naive Bayes classifier
+naive_bayes_model = GaussianNB()
+
+# Train the model
+naive_bayes_model.fit(feature_train, target_train)
+target_predictions = naive_bayes_model.predict(feature_test)
+
+# Calculate performance metrics
+confusion_matrix_result = confusion_matrix(target_test, target_predictions)
+accuracy_value = accuracy_score(target_test, target_predictions)
+error_rate_value = 1 - accuracy_value
+classification_report_result = classification_report(target_test, target_predictions)
+
+# Display performance metrics
+print("Confusion Matrix:")
+print(confusion_matrix_result)
+print("\nClassification Report:")
+print(classification_report_result)
+print(f"Accuracy: {accuracy_value * 100:.2f}%")
+print(f"Error Rate: {error_rate_value * 100:.2f}%")
+
+# Plot the confusion matrix with a different color scheme (Reds)
+plt.figure(figsize=(6, 6))
+sns.heatmap(confusion_matrix_result, annot=True, fmt="d", cmap="Reds", xticklabels=iris_dataset['Species'].unique(), yticklabels=iris_dataset['Species'].unique())
+plt.xlabel("Predicted Labels")
+plt.ylabel("True Labels")
+plt.title("Confusion Matrix")
+plt.show()
